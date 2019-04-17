@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using crudBiblioteca.Data;
 
 namespace crudBiblioteca.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190417013117_addEntidadeLivro")]
+    partial class addEntidadeLivro
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,43 +186,11 @@ namespace crudBiblioteca.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("crudBiblioteca.Models.Acervo", b =>
+            modelBuilder.Entity("crudBiblioteca.Models.Livro.Livro", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Nome");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Acervos");
-                });
-
-            modelBuilder.Entity("crudBiblioteca.Models.Leitor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Endereco");
-
-                    b.Property<string>("Nome");
-
-                    b.Property<string>("Telefone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Leitores");
-                });
-
-            modelBuilder.Entity("crudBiblioteca.Models.Livro", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("AcervoId");
 
                     b.Property<string>("Autor");
 
@@ -231,8 +201,6 @@ namespace crudBiblioteca.Data.Migrations
                     b.Property<int>("Quantidade");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AcervoId");
 
                     b.ToTable("Livros");
                 });
@@ -280,13 +248,6 @@ namespace crudBiblioteca.Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("crudBiblioteca.Models.Livro", b =>
-                {
-                    b.HasOne("crudBiblioteca.Models.Acervo")
-                        .WithMany("Livros")
-                        .HasForeignKey("AcervoId");
                 });
 #pragma warning restore 612, 618
         }
