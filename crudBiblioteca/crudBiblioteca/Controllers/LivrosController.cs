@@ -60,6 +60,7 @@ namespace crudBiblioteca.Controllers
         {
             if (ModelState.IsValid)
             {
+                livro.AcervoId = 1;
                 _context.Add(livro);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

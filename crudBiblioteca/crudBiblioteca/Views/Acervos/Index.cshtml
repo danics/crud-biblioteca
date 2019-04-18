@@ -1,0 +1,49 @@
+﻿@model crudBiblioteca.Models.Acervo
+
+
+
+@{
+    ViewData["Title"] = "Acervo";
+}
+
+<h1>Acervo</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Livros.FirstOrDefault().Nome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Livros.FirstOrDefault().Autor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Livros.FirstOrDefault().Genero)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Livros.FirstOrDefault().Quantidade)
+            </th>
+           <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Livros)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Autor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genero)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantidade)
+            </td>           
+        </tr>
+    }
+    </tbody>
+</table>
