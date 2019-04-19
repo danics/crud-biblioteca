@@ -7,27 +7,30 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using crudBiblioteca.Data;
 using crudBiblioteca.Models;
-using Microsoft.AspNetCore.Authorization;
+using crudBiblioteca.Models.Enuns;
 
 namespace crudBiblioteca.Controllers
 {
-    [Authorize]
-    public class LivrosController : Controller
+    public class EmprestimosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private Status status;
 
-        public LivrosController(ApplicationDbContext context)
+        public EmprestimosController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Livros
+        // GET: Emprestimos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Livros.ToListAsync());
+
+            var leitores = _context.Emprestimos.Include(e => e.Leitor).Include(f => f.Livro);
+            ViewData["Leitores"] = new SelectList(leitores, "Id", "Nome");
+            return View(await leitores.ToListAsync());
         }
 
-        // GET: Livros/Details/5
+        // GET: Emprestimos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,40 +38,45 @@ namespace crudBiblioteca.Controllers
                 return NotFound();
             }
 
-            var livro = await _context.Livros
+            var emprestimo = await _context.Emprestimos
+                .Include(e => e.Leitor)
+                .Include(e => e.Livro)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (livro == null)
+            if (emprestimo == null)
             {
                 return NotFound();
             }
 
-            return View(livro);
+            return View(emprestimo);
         }
 
-        // GET: Livros/Create
+        // GET: Emprestimos/Create
         public IActionResult Create()
         {
+            ViewData["LeitorId"] = new SelectList(_context.Leitores, "Id", "Nome");
+            ViewData["LivroId"] = new SelectList(_context.Livros.Where(x => x.Status == Status.Disponivel), "Id", "Nome");
             return View();
         }
 
-        // POST: Livros/Create
+        // POST: Emprestimos/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Genero,Autor,Status,Quantidade")] Livro livro)
+        public async Task<IActionResult> Create([Bind("Id,DataInicial,DataFinal,Status,LivroId,LeitorId")] Emprestimo emprestimo)
         {
             if (ModelState.IsValid)
             {
-                livro.AcervoId = 1;
-                _context.Add(livro);
+                _context.Add(emprestimo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(livro);
+            ViewData["LeitorId"] = new SelectList(_context.Leitores, "Id", "Nome", emprestimo.LeitorId);
+            ViewData["LivroId"] = new SelectList(_context.Livros, "Id", "Nome", emprestimo.LivroId);
+            return View(emprestimo);
         }
 
-        // GET: Livros/Edit/5
+        // GET: Emprestimos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,22 +84,24 @@ namespace crudBiblioteca.Controllers
                 return NotFound();
             }
 
-            var livro = await _context.Livros.FindAsync(id);
-            if (livro == null)
+            var emprestimo = await _context.Emprestimos.FindAsync(id);
+            if (emprestimo == null)
             {
                 return NotFound();
             }
-            return View(livro);
+            ViewData["LeitorId"] = new SelectList(_context.Leitores, "Id", "Id", emprestimo.LeitorId);
+            ViewData["LivroId"] = new SelectList(_context.Livros, "Id", "Id", emprestimo.LivroId);
+            return View(emprestimo);
         }
 
-        // POST: Livros/Edit/5
+        // POST: Emprestimos/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Autor,Genero,Status,Quantidade")] Livro livro)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DataInicial,DataFinal,Status,LivroId,LeitorId")] Emprestimo emprestimo)
         {
-            if (id != livro.Id)
+            if (id != emprestimo.Id)
             {
                 return NotFound();
             }
@@ -100,13 +110,12 @@ namespace crudBiblioteca.Controllers
             {
                 try
                 {
-                    livro.AcervoId = 1;
-                    _context.Update(livro);
+                    _context.Update(emprestimo);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LivroExists(livro.Id))
+                    if (!EmprestimoExists(emprestimo.Id))
                     {
                         return NotFound();
                     }
@@ -117,10 +126,12 @@ namespace crudBiblioteca.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(livro);
+            ViewData["LeitorId"] = new SelectList(_context.Leitores, "Id", "Id", emprestimo.LeitorId);
+            ViewData["LivroId"] = new SelectList(_context.Livros, "Id", "Id", emprestimo.LivroId);
+            return View(emprestimo);
         }
 
-        // GET: Livros/Delete/5
+        // GET: Emprestimos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,30 +139,32 @@ namespace crudBiblioteca.Controllers
                 return NotFound();
             }
 
-            var livro = await _context.Livros
+            var emprestimo = await _context.Emprestimos
+                .Include(e => e.Leitor)
+                .Include(e => e.Livro)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (livro == null)
+            if (emprestimo == null)
             {
                 return NotFound();
             }
 
-            return View(livro);
+            return View(emprestimo);
         }
 
-        // POST: Livros/Delete/5
+        // POST: Emprestimos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var livro = await _context.Livros.FindAsync(id);
-            _context.Livros.Remove(livro);
+            var emprestimo = await _context.Emprestimos.FindAsync(id);
+            _context.Emprestimos.Remove(emprestimo);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LivroExists(int id)
+        private bool EmprestimoExists(int id)
         {
-            return _context.Livros.Any(e => e.Id == id);
+            return _context.Emprestimos.Any(e => e.Id == id);
         }
     }
 }

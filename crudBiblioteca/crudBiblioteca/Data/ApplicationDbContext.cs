@@ -17,6 +17,7 @@ namespace crudBiblioteca.Data
         public DbSet<Livro> Livros { get; set; }
         public DbSet<Acervo> Acervos { get; set; }
         public DbSet<Leitor> Leitores { get; set; }
+        public DbSet<Emprestimo> Emprestimos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -15,6 +15,7 @@ namespace crudBiblioteca.Models
         public string Autor { get; set; }
         [DisplayName("Gênero")]
         public Genero Genero { get; set; }
+        public Status Status { get; set; }
         public int Quantidade { get; set; }
 
         public int AcervoId { get; set; }
