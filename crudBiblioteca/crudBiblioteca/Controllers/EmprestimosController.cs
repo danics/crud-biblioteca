@@ -67,15 +67,21 @@ namespace crudBiblioteca.Controllers
         {
             if (ModelState.IsValid)
             {
+                Livro decrementaquantidadelivros = _context.Livros.Find(emprestimo.LivroId);
+                decrementaquantidadelivros.Emprestar(emprestimo.LivroId);
+                await _context.SaveChangesAsync();
+
                 _context.Add(emprestimo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+           
             ViewData["LeitorId"] = new SelectList(_context.Leitores, "Id", "Nome", emprestimo.LeitorId);
             ViewData["LivroId"] = new SelectList(_context.Livros, "Id", "Nome", emprestimo.LivroId);
+           
             return View(emprestimo);
         }
-
+       
         // GET: Emprestimos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -89,8 +95,8 @@ namespace crudBiblioteca.Controllers
             {
                 return NotFound();
             }
-            ViewData["LeitorId"] = new SelectList(_context.Leitores, "Id", "Id", emprestimo.LeitorId);
-            ViewData["LivroId"] = new SelectList(_context.Livros, "Id", "Id", emprestimo.LivroId);
+            ViewData["LeitorId"] = new SelectList(_context.Leitores, "Id", "Nome", emprestimo.LeitorId);
+            ViewData["LivroId"] = new SelectList(_context.Livros, "Id", "Nome", emprestimo.LivroId);
             return View(emprestimo);
         }
 
@@ -126,8 +132,8 @@ namespace crudBiblioteca.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LeitorId"] = new SelectList(_context.Leitores, "Id", "Id", emprestimo.LeitorId);
-            ViewData["LivroId"] = new SelectList(_context.Livros, "Id", "Id", emprestimo.LivroId);
+            ViewData["LeitorId"] = new SelectList(_context.Leitores, "Id", "Nome", emprestimo.LeitorId);
+            ViewData["LivroId"] = new SelectList(_context.Livros, "Id", "Nome", emprestimo.LivroId);
             return View(emprestimo);
         }
 
@@ -166,5 +172,6 @@ namespace crudBiblioteca.Controllers
         {
             return _context.Emprestimos.Any(e => e.Id == id);
         }
+
     }
 }

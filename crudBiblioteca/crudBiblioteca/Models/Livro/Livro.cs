@@ -21,5 +21,15 @@ namespace crudBiblioteca.Models
         public int AcervoId { get; set; }
         [ForeignKey("AcervoId")]
         public Acervo Acervo { get; set; }
+
+        public void Emprestar(int id)
+        {
+            Quantidade = Quantidade - 1;
+        }
+
+        public void Devolver(int id)
+        {
+            Quantidade = Quantidade + 1;
+        }
     }
 }

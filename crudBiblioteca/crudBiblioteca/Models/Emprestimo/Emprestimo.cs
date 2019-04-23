@@ -31,7 +31,5 @@ namespace crudBiblioteca.Models
         [ForeignKey("LeitorId")]
         public Leitor Leitor { get; set; }
 
-
-
     }
 }
